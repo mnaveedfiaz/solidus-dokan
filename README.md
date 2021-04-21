@@ -2,43 +2,84 @@
 An online store based on solidus open source.
 
 
-# RateDetector
+## Rate Detector Take Home Exercise
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/rate_detector`. To experiment with that code, run `bin/console` for an interactive prompt.
+The included CSV file contains a list of volume readings.  Each of the CSV entries contains two values, the timestamp when the  volume was read, and the actual volume in litres. The CSV file is  ordered by the reading's timestamp.
 
-TODO: Delete this and the text above, and describe your gem
+You are going to create a  small application in Ruby that reads this CSV file and finds the periods of time when the volume changes at a rate greater than a user defined  volume.
 
-## Installation
+The first parameter to the script is the path to the CSV  file, and the second parameter is an integer value representing the rate of change:
 
-Add this line to your application's Gemfile:
+`
+ruby rate_detector.rb <csv_file> <rate_of_change>
+`
 
-```ruby
-gem 'rate_detector'
+For example:
+
+`
+ruby rate_detector.rb volumes.csv 100
+`
+
+The rate of change is passed to the script in litres **per minute**.
+
+The script will output, to stdout, a comma separated list of time periods  where the changes in volume were greater than the rate of change. Note  that we are interested in the change in volume **as an absolute value**, as it could be either positive or negative.
+
+The format of the output CSV should be:
+
+`
+Start Timestamp,End Timestamp,Start Volume,End Volume
+`
+
+For example, given an input CSV containing the data below:
+
+```
+Timestamp,Volume
+2019-04-29 10:03:00,9100
+2019-04-29 10:04:00,9400
+2019-04-29 10:10:00,9700
 ```
 
-And then execute:
+and assuming the desired rate of change is 100, the rate  of change between the first two entries is 300 litres per minute. The  2nd and 3rd entries only have a rate of change of 50 litres per minute  between them.
 
-    $ bundle install
+Hence, the output CSV output should be:
 
-Or install it yourself as:
+```
+Start Timestamp,End Timestamp,Start Volume,End Volume
+2019-04-29 10:03:00,2019-04-29 10:04:00,9100,9400
+```
 
-    $ gem install rate_detector
+If there are consecutive groups of entries that meet the  rate of change criteria, these should be "merged". For example, given  the input CSV containing:
 
-## Usage
+```
+Timestamp,Volume
+2019-04-29 10:03:00,9100
+2019-04-29 10:04:00,9400
+2019-04-29 10:10:00,10600
+```
 
-TODO: Write usage instructions here
+the output CSV should be:
 
-## Development
+```
+Start Timestamp,End Timestamp,Start Volume,End Volume
+2019-04-29 10:03:00,2019-04-29 10:10:00,9100,10600
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+The expected output from running the program against the supplied example CSV should be:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```
+ruby rate_detector.rb volumes.csv 100
+Start Timestamp,End Timestamp,Start Volume,End Volume
+2019-04-29` `10:03:20` `+1000,2019-04-29` `10:10:00` `+1000,9100,11200
+2019-04-29` `10:10:20` `+1000,2019-04-29` `10:14:00` `+1000,11200,11000
+2019-04-29` `10:16:00` `+1000,2019-04-29` `10:19:00` `+1000,11020,7000
+```
 
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/rate_detector.
 
 
-## License
+### Guidelines
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+As a team we embrace certain approaches with the code we write and will be looking for these qualities in your response.
+
+In summary, we value well organised readable code with a strong object oriented design. An example of our stylistic influences could be drawn from Sandi Metz and the fundamental principles she outlines in books such as 'Practical Object Oriented Design' and her 7 rules for developers.
+
+We also value meaningful testing and suggest you test your output against the examples given.
